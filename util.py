@@ -1,17 +1,12 @@
 # util.py
 # -------
-# Licensing Information:  You are free to use or extend these projects for 
-# educational purposes provided that (1) you do not distribute or publish 
-# solutions, (2) you retain this notice, and (3) you provide clear 
-# attribution to UC Berkeley, including a link to 
-# http://inst.eecs.berkeley.edu/~cs188/pacman/pacman.html
-# 
-# Attribution Information: The Pacman AI projects were developed at UC Berkeley.
-# The core projects and autograders were primarily created by John DeNero 
-# (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
-# Student side autograding was added by Brad Miller, Nick Hay, and 
-# Pieter Abbeel (pabbeel@cs.berkeley.edu).
-
+# Licensing Information: Please do not distribute or publish solutions to this
+# project. You are free to use and extend these projects for educational
+# purposes. The Pacman AI projects were developed at UC Berkeley, primarily by
+# John DeNero (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
+# Student side autograding was added by Brad Miller, Nick Hay, and Pieter 
+# Abbeel in Spring 2013.
+# For more info, see http://inst.eecs.berkeley.edu/~cs188/pacman/pacman.html
 
 import sys
 import inspect
@@ -430,7 +425,7 @@ def raiseNotDefined():
     fileName = inspect.stack()[1][1]
     line = inspect.stack()[1][2]
     method = inspect.stack()[1][3]
-
+    
     print "*** Method not implemented: %s at line %s of %s" % (method, line, fileName)
     sys.exit(1)
 
@@ -582,9 +577,9 @@ def pause():
 # code to handle timeouts
 #
 # FIXME
-# NOTE: TimeoutFuncton is NOT reentrant.  Later timeouts will silently
-# disable earlier timeouts.  Could be solved by maintaining a global list
-# of active time outs.  Currently, questions which have test cases calling
+# NOTE: TimeoutFuncton is NOT reentrant.  Later timeouts will silently 
+# disable earlier timeouts.  Could be solved by maintaining a global list 
+# of active time outs.  Currently, questions which have test cases calling 
 # this have all student code so wrapped.
 #
 import signal
@@ -631,13 +626,13 @@ _MUTED = False
 class WritableNull:
     def write(self, string):
         pass
-
+ 
 def mutePrint():
     global _ORIGINAL_STDOUT, _ORIGINAL_STDERR, _MUTED
-    if _MUTED:
+    if _MUTED: 
         return
     _MUTED = True
-
+    
     _ORIGINAL_STDOUT = sys.stdout
     #_ORIGINAL_STDERR = sys.stderr
     sys.stdout = WritableNull()
@@ -645,10 +640,10 @@ def mutePrint():
 
 def unmutePrint():
     global _ORIGINAL_STDOUT, _ORIGINAL_STDERR, _MUTED
-    if not _MUTED:
+    if not _MUTED: 
         return
     _MUTED = False
-
+    
     sys.stdout = _ORIGINAL_STDOUT
     #sys.stderr = _ORIGINAL_STDERR
-
+    

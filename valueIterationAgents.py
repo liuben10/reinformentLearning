@@ -1,17 +1,12 @@
 # valueIterationAgents.py
 # -----------------------
-# Licensing Information:  You are free to use or extend these projects for 
-# educational purposes provided that (1) you do not distribute or publish 
-# solutions, (2) you retain this notice, and (3) you provide clear 
-# attribution to UC Berkeley, including a link to 
-# http://inst.eecs.berkeley.edu/~cs188/pacman/pacman.html
-# 
-# Attribution Information: The Pacman AI projects were developed at UC Berkeley.
-# The core projects and autograders were primarily created by John DeNero 
-# (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
-# Student side autograding was added by Brad Miller, Nick Hay, and 
-# Pieter Abbeel (pabbeel@cs.berkeley.edu).
-
+# Licensing Information: Please do not distribute or publish solutions to this
+# project. You are free to use and extend these projects for educational
+# purposes. The Pacman AI projects were developed at UC Berkeley, primarily by
+# John DeNero (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
+# Student side autograding was added by Brad Miller, Nick Hay, and Pieter 
+# Abbeel in Spring 2013.
+# For more info, see http://inst.eecs.berkeley.edu/~cs188/pacman/pacman.html
 
 import mdp, util
 
@@ -42,24 +37,31 @@ class ValueIterationAgent(ValueEstimationAgent):
         self.mdp = mdp
         self.discount = discount
         self.iterations = iterations
-        self.values = util.Counter() # A Counter is a dict with default 0
+        self.values = util.Counter()
 
         # Write value iteration code here
         "*** YOUR CODE HERE ***"
-        while self.iterations > 0:
-            prevIterValues = util.Counter(self.values)
-            for state in mdp.getStates():
-                valueFromAction = []
-                thisActionValue = 0
-                for action in mdp.getPossibleActions(state):
-                    for successor, prob in mdp.getTransitionStatesAndProbs(state, action):
-                        thisActionValue += prob * (mdp.getReward(state, action, successor) + self.discount * prevIterValues[successor])
-                    valueFromAction.append(thisActionValue)
-                    thisActionValue = 0
-                if valueFromAction != []:
-                    self.values[state] = max(valueFromAction)
-            self.iterations -= 1
-
+        actionList = util.Counter()
+        states = self.mdp.getStates()
+        for i in range(self.iterations):
+            iterVals = self.values.copy();
+            for state in states:
+                if self.mdp.isTerminal(state):
+                    self.values[state] = 0
+                    continue
+                else:
+                    bestV = float("-Inf")
+                    bestAction = None
+                    for action in self.mdp.getPossibleActions(state):
+                        qValue = 0.0
+                        for sppair in self.mdp.getTransitionStatesAndProbs(state, action):
+                            nextState, nextStateProb = sppair
+                            reward = self.mdp.getReward(state, action, nextState)
+                            qValue += nextStateProb*(reward + (self.discount*iterVals[nextState]))
+                        if qValue > bestV:
+                            bestV = qValue
+                            bestAction = action
+                    self.values[state] = bestV
 
     def getValue(self, state):
         """
@@ -74,10 +76,18 @@ class ValueIterationAgent(ValueEstimationAgent):
           value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
-        qValue = 0
-        for successor, prob in self.mdp.getTransitionStatesAndProbs(state, action):
-            qValue += prob * (self.mdp.getReward(state, action, successor) + self.discount * self.values[successor])
+
+        qValue = 0.0
+        transition_sppairs = self.mdp.getTransitionStatesAndProbs(state, action)
+
+        for sppair in transition_sppairs:
+           nextState, nextStateProb = sppair
+           reward = self.mdp.getReward(state, action, nextState)
+
+           qValue += nextStateProb*(reward + (self.discount*self.getValue(nextState)))
+
         return qValue
+       
 
     def computeActionFromValues(self, state):
         """
@@ -89,17 +99,22 @@ class ValueIterationAgent(ValueEstimationAgent):
           terminal state, you should return None.
         """
         "*** YOUR CODE HERE ***"
-        actions = self.mdp.getPossibleActions(state)
-        if not len(actions):
-            return
-        qValues = []
-        for action in actions:
-            qValues.append(self.computeQValueFromValues(state, action))
-        maxQValue = max(qValues)
-        bestIndices = [index for index in range(len(qValues)) if qValues[index] == maxQValue ]
-        import random; chosenIndex = random.choice(bestIndices)
-        return actions[chosenIndex]
+        if self.mdp.isTerminal(state):
+            return None
+        else:
+            bestQ = float("-Inf")
+            bestAction = None
+            actions = self.mdp.getPossibleActions(state)
+            for action in actions:
 
+                tempQ = self.getQValue(state,action)
+                if tempQ > bestQ:
+                    bestQ = tempQ
+                    bestAction = action
+
+            return bestAction
+            
+            
     def getPolicy(self, state):
         return self.computeActionFromValues(state)
 

@@ -1,17 +1,12 @@
 # reinforcementTestClasses.py
 # ---------------------------
-# Licensing Information:  You are free to use or extend these projects for 
-# educational purposes provided that (1) you do not distribute or publish 
-# solutions, (2) you retain this notice, and (3) you provide clear 
-# attribution to UC Berkeley, including a link to 
-# http://inst.eecs.berkeley.edu/~cs188/pacman/pacman.html
-# 
-# Attribution Information: The Pacman AI projects were developed at UC Berkeley.
-# The core projects and autograders were primarily created by John DeNero 
-# (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
-# Student side autograding was added by Brad Miller, Nick Hay, and 
-# Pieter Abbeel (pabbeel@cs.berkeley.edu).
-
+# Licensing Information: Please do not distribute or publish solutions to this
+# project. You are free to use and extend these projects for educational
+# purposes. The Pacman AI projects were developed at UC Berkeley, primarily by
+# John DeNero (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
+# Student side autograding was added by Brad Miller, Nick Hay, and Pieter 
+# Abbeel in Spring 2013.
+# For more info, see http://inst.eecs.berkeley.edu/~cs188/pacman/pacman.html
 
 import testClasses
 import random, math, traceback, sys, os
@@ -208,9 +203,6 @@ class ApproximateQLearningTest(testClasses.TestCase):
         self.env = gridworld.GridworldEnvironment(self.grid)
         self.epsilon = float(testDict['epsilon'])
         self.learningRate = float(testDict['learningRate'])
-        self.extractor = 'IdentityExtractor'
-        if 'extractor' in testDict:
-            self.extractor = testDict['extractor']
         self.opts = {'actionFn': self.env.getPossibleActions, 'epsilon': self.epsilon, 'gamma': self.discount, 'alpha': self.learningRate}
         numExperiences = int(testDict['numExperiences'])
         maxPreExperiences = 10
@@ -278,7 +270,7 @@ class ApproximateQLearningTest(testClasses.TestCase):
         return True
 
     def runAgent(self, moduleDict, numExperiences):
-        agent = moduleDict['qlearningAgents'].ApproximateQAgent(extractor=self.extractor, **self.opts)
+        agent = moduleDict['qlearningAgents'].ApproximateQAgent(**self.opts)
         states = filter(lambda state : len(self.grid.getPossibleActions(state)) > 0, self.grid.getStates())
         states.sort()
         randObj = FixedRandom().random
